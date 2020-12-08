@@ -39,32 +39,37 @@ namespace day07
                 contains.Add(color, thisColorContains);
             }
 
+
+            Console.Out.WriteLine($"{waysToContain("shiny gold")} ways to have a shiny bag");
+            Console.Out.WriteLine($"{bagsInside("shiny gold") - 1} bags in your shiny gold one");
+        }
+
+        static int waysToContain(String color) {
             String searching;
             HashSet<String> outermost = new HashSet<string>();
+
             Stack<String> toSearch = new Stack<String>();
             toSearch.Push("shiny gold");
+
             while (toSearch.TryPop(out searching)) {
                 if (!containedBy.ContainsKey(searching)) {
                     continue;
                 }
-                List<String> cby = containedBy[searching];
-                foreach (String outer in cby) {
+
+                foreach (String outer in containedBy[searching]) {
                     if (!outermost.Contains(outer)) {
                         toSearch.Push(outer);
                         outermost.Add(outer);
                     }
                 }
             }
-
-            Console.Out.WriteLine($"{outermost.Count} ways to have a shiny bag");
-            Console.Out.WriteLine($"{bagsInside("shiny gold") - 1} bags in your shiny gold one");
+            
+            return outermost.Count;
         }
 
         static int bagsInside(String color) {
             if (!contains.ContainsKey(color)) {
                 return 0;
-            } else if (contains[color].Count == 0) {
-                return 1;
             }
 
             int result = 1;
