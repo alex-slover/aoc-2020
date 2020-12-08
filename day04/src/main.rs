@@ -1,4 +1,4 @@
-use std::{fs::File, io::{self, BufRead, BufReader}};
+use std::{fs::File, io::{self, BufRead}};
 use regex::Regex;
 
 static FIELDS: [&str; 8] = ["cid", "pid", "ecl", "hcl", "hgt", "eyr", "iyr", "byr"];
@@ -6,7 +6,6 @@ static FIELDS: [&str; 8] = ["cid", "pid", "ecl", "hcl", "hgt", "eyr", "iyr", "by
 fn main() {
     let file = File::open("input.txt").unwrap();
     let mut valid_passports = 0;
-    let mut has_fields: u8 = 0;
 
     let BYR: Regex = Regex::new(r"^\d{4}$").unwrap();
     let IYR: Regex = Regex::new(r"^\d{4}$").unwrap();
@@ -15,16 +14,14 @@ fn main() {
     let HCL: Regex = Regex::new(r"^#[0-9a-fA-F]{6}$").unwrap();
     let ECL: Regex = Regex::new(r"^(amb|blu|brn|gry|grn|hzl|oth)$").unwrap();
     let PID: Regex = Regex::new(r"^\d{9}$").unwrap();
-     
+
+    let mut has_fields: u8 = 0;
     for line_ref in io::BufReader::new(file).lines() {
         let line = line_ref.unwrap();
-        println!("{}\n", line);
+
         if line.is_empty() {
             if has_fields >= 254 {
-                println!("Valid!");
                 valid_passports += 1;
-            } else {
-                println!("Invalid...");
             }
             has_fields = 0;
             continue;
@@ -77,7 +74,7 @@ fn main() {
                     "cid" => false,
                     _ => false
                 };
-                print!("{}: {}", k, valid);
+
                 if valid {
                     has_fields += 1 << i;
                 }
@@ -86,10 +83,7 @@ fn main() {
         }
     }
     if has_fields >= 254 {
-        println!("Valid!");
         valid_passports += 1;
-    } else {
-        println!("Invalid...");
     }
 
     println!("{} valid passports", valid_passports);
